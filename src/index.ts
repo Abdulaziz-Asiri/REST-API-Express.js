@@ -13,11 +13,13 @@ app.use(cors({
 
 app.use(compression());
 app.use(cookieParser());
-app.user(bodyParser.json());
+app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
+server.listen(8000, () => {
+    console.log('Server running on http://localhost:8000');
+})
 
 
 
- 
