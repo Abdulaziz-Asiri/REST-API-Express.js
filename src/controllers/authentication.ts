@@ -55,7 +55,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         if(!email || !password) {
             res.status(400).json({
               status: 400,
-              message: "Please provide email, password, and username",
+              message: "Please provide email, password",
             });
             return;
         }
@@ -65,7 +65,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         if (!user){
             res.status(400).json({
               status: 400,
-              message: "Please provide email, password, and username",
+              message: "There is no users",
             });
             return;
         }
@@ -75,7 +75,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         if (user.authentication.password != expectedHash) {
           res.status(403).json({
             status: 403,
-            message: "Please provide email, password, and username",
+            message: "Wrong, password or email",
           });
           return;
         }
