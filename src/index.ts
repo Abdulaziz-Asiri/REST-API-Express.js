@@ -22,7 +22,8 @@ server.listen(8080, () => {
     console.log('Server running on http://localhost:8080');
 })
 
-const MONOGO_URL = 'mongodb+srv://abood75:78PUv4f0zfJYmtSl@cluster0.1it7o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// const MONOGO_URL = 'mongodb+srv://abood75:78PUv4f0zfJYmtSl@cluster0.1it7o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // connect to cloud
+const MONOGO_URL = 'mongodb://localhost:27017/expressdb'; //connect to local
 
 
 mongoos.Promise = Promise;
