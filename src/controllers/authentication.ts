@@ -1,7 +1,7 @@
 import express from 'express';
 import {getUserByEmail, createUser} from '../db/users'
 import {authentication, random} from '../helpers'
-
+import { produceMessage } from "../kafka/producer";
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
@@ -32,6 +32,7 @@ export const register = async (req: express.Request, res: express.Response) => {
         password: authentication(salt, password),
       },
     });
+    await produceMessage("user-topic", { event: "USER-REGISTER", user });
 
     res.status(200).json({
       status: 201,
@@ -86,7 +87,10 @@ export const login = async (req: express.Request, res: express.Response) => {
         await user.save();
 
         res.cookie('Azoz-Auth', user.authentication.sessionToken, {domain: 'localhost', path: '/'})
-        
+            await produceMessage("user-topic", { //
+              event: "USER-LOGGEDIN",
+              user,
+            });
         res.status(200).json(user).end();
         return;
     }catch(error){

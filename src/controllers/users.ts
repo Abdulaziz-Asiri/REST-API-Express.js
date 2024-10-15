@@ -1,11 +1,13 @@
 import express from 'express'
 
 import { getUsers, deleteUserById, getUserById } from "../db/users";
+import { produceMessage } from "../kafka/producer";
 
 
 export const getAllUsers = async (req: express.Request, res:express.Response) =>{
     try{
         const users = await getUsers();
+        await produceMessage("user-topic", { event: "GET-USERS", users });
         res.status(200).json(users);
         return;
     } catch(error){
@@ -15,25 +17,11 @@ export const getAllUsers = async (req: express.Request, res:express.Response) =>
     }
 };
 
-
-// export const getAllUsers = async (req: express.Request, res: express.Response) =>{
-//     try{
-//         const users = await getUsers();
-//         res.status(200).json(users)
-//         return
-//     }catch(error){
-//         console.log(error)
-//         res.status(400).json({
-//             status:400,
-//             message: "no usres, somthing wrong",
-//         });
-//         return;
-//     }
-// }
 export const deleteUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const deletedUser = await deleteUserById(id);
+    await produceMessage("user-topic", { event: "User Deleted", deletedUser });
     res.json(deletedUser);
       return;
 
@@ -61,6 +49,7 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
     const user = await getUserById(id);
     user.username = username;
     await user.save();
+    await produceMessage("user-topic", { event: "User Updated", user });
 
     res.sendStatus(200).json(user).end();
     return;
